@@ -23,7 +23,7 @@ python -m cloudtrail_quickscan samples/cloudtrail_sample.json
 Run tests:
 
 ```bash
-python -m pytest
+PYTHONPATH=src python -m unittest discover -s tests
 ```
 
 ## Example output

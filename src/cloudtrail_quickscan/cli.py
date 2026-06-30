@@ -50,3 +50,7 @@ def print_report(events_count: int, findings: list, summary_only: bool = False) 
         print(f"      region: {finding.region}")
         print(f"      time: {finding.event_time}")
         print(f"      note: {finding.detail}")
+
+
+if __name__ == "__main__":
+    main()

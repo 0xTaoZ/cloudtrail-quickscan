@@ -32,6 +32,8 @@ Run tests:
 PYTHONPATH=src python -m unittest discover -s tests
 ```
 
+The same test command runs in GitHub Actions.
+
 ## Example output
 
 ```text
@@ -58,3 +60,4 @@ LOW   Event from uncommon region: ap-south-1
 The sample data is fake and only used for testing.
 
 Short triage notes are in [docs/investigation-notes.md](docs/investigation-notes.md).
+Basic contribution notes are in [CONTRIBUTING.md](CONTRIBUTING.md).

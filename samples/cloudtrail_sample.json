@@ -1,0 +1,57 @@
+{
+  "Records": [
+    {
+      "eventTime": "2026-06-28T08:15:00Z",
+      "eventName": "ConsoleLogin",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "198.51.100.10",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "responseElements": {
+        "ConsoleLogin": "Failure"
+      }
+    },
+    {
+      "eventTime": "2026-06-28T08:18:00Z",
+      "eventName": "CreateAccessKey",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "198.51.100.10",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      }
+    },
+    {
+      "eventTime": "2026-06-28T09:04:00Z",
+      "eventName": "AuthorizeSecurityGroupIngress",
+      "awsRegion": "eu-west-1",
+      "sourceIPAddress": "203.0.113.20",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:sts::111122223333:assumed-role/AdminRole/student"
+      }
+    },
+    {
+      "eventTime": "2026-06-28T09:30:00Z",
+      "eventName": "ListBuckets",
+      "awsRegion": "ap-south-1",
+      "sourceIPAddress": "203.0.113.30",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      }
+    },
+    {
+      "eventTime": "2026-06-28T10:11:00Z",
+      "eventName": "DeleteTrail",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.0.2.50",
+      "userIdentity": {
+        "type": "Root",
+        "principalId": "111122223333"
+      }
+    }
+  ]
+}

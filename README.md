@@ -56,3 +56,5 @@ LOW   Event from uncommon region: ap-south-1
 ## Notes
 
 The sample data is fake and only used for testing.
+
+Short triage notes are in [docs/investigation-notes.md](docs/investigation-notes.md).

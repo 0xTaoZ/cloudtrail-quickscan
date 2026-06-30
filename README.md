@@ -2,9 +2,9 @@
 
 A small Python tool for checking AWS CloudTrail JSON logs.
 
-I made this as a learning project for blue team and cloud security practice. The goal is simple: load CloudTrail events, find a few suspicious patterns, and print a report that is easy to read.
+It loads CloudTrail events, finds a few suspicious patterns, and prints a short report that is easy to read.
 
-This is not a full SIEM or a cloud security platform. It is a small lab project for understanding what useful cloud logs look like.
+This is not a full SIEM or a cloud security platform. It is meant to be a small helper for quick log review and cloud security labs.
 
 ## What it checks
 
@@ -45,6 +45,7 @@ LOW   Event from uncommon region: ap-south-1
 - add more detection rules slowly
 - add tests for every rule
 - maybe export findings to JSON later
+- add a few notes about how to investigate each finding
 
 ## Notes
 

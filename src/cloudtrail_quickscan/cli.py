@@ -1,4 +1,5 @@
 import argparse
+import json
 from collections import Counter
 
 from .parser import load_events
@@ -16,12 +17,20 @@ def main() -> None:
         action="store_true",
         help="Only print the finding counts",
     )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Print findings as JSON for scripts",
+    )
     args = parser.parse_args()
 
     events = load_events(args.path)
     findings = scan_events(events)
 
-    print_report(events_count=len(events), findings=findings, summary_only=args.summary_only)
+    if args.json:
+        print_json_report(events_count=len(events), findings=findings)
+    else:
+        print_report(events_count=len(events), findings=findings, summary_only=args.summary_only)
 
 
 def print_report(events_count: int, findings: list, summary_only: bool = False) -> None:
@@ -50,6 +59,15 @@ def print_report(events_count: int, findings: list, summary_only: bool = False) 
         print(f"      region: {finding.region}")
         print(f"      time: {finding.event_time}")
         print(f"      note: {finding.detail}")
+
+
+def print_json_report(events_count: int, findings: list) -> None:
+    report = {
+        "events_checked": events_count,
+        "findings_count": len(findings),
+        "findings": [finding.to_dict() for finding in findings],
+    }
+    print(json.dumps(report, indent=2))
 
 
 if __name__ == "__main__":

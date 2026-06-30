@@ -12,6 +12,17 @@ class Finding:
     event_time: str
     detail: str
 
+    def to_dict(self) -> dict[str, str]:
+        return {
+            "severity": self.severity,
+            "title": self.title,
+            "event_name": self.event_name,
+            "user": self.user,
+            "region": self.region,
+            "event_time": self.event_time,
+            "detail": self.detail,
+        }
+
 
 def get_user_name(event: dict[str, Any]) -> str:
     identity = event.get("userIdentity") or {}

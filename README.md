@@ -20,6 +20,12 @@ This is not a full SIEM or a cloud security platform. It is meant to be a small 
 python -m cloudtrail_quickscan samples/cloudtrail_sample.json
 ```
 
+JSON output for scripts:
+
+```bash
+python -m cloudtrail_quickscan samples/cloudtrail_sample.json --json
+```
+
 Run tests:
 
 ```bash

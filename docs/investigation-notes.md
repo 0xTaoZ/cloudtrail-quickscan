@@ -26,6 +26,12 @@ These notes are short on purpose. They are reminders for what I would check afte
 - Review the port and protocol.
 - Compare the change with the expected lab or production setup.
 
+## CloudTrail logging changes
+
+- Confirm if the logging change was planned maintenance.
+- Check who made the change, from which source IP, and which role or user was used.
+- Look for IAM, network, or compute activity right before and after the logging change.
+
 ## Uncommon region
 
 - Confirm if the account normally uses this AWS region.

@@ -55,6 +55,7 @@ def print_report(events_count: int, findings: list, summary_only: bool = False) 
     for finding in findings:
         print(f"{finding.severity:<5} {finding.title}")
         print(f"      user: {finding.user}")
+        print(f"      source ip: {finding.source_ip}")
         print(f"      event: {finding.event_name}")
         print(f"      region: {finding.region}")
         print(f"      time: {finding.event_time}")

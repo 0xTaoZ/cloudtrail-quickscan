@@ -128,6 +128,7 @@ def make_finding(event: dict[str, Any], severity: str, title: str, detail: str) 
         title=title,
         event_name=str(event.get("eventName", "unknown")),
         user=get_user_name(event),
+        source_ip=str(event.get("sourceIPAddress", "unknown")),
         region=str(event.get("awsRegion", "unknown")),
         event_time=str(event.get("eventTime", "unknown")),
         detail=detail,

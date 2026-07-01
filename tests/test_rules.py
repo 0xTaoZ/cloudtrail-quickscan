@@ -18,6 +18,20 @@ class RuleTest(unittest.TestCase):
         self.assertEqual(len(findings), 1)
         self.assertEqual(findings[0].severity, "MED")
         self.assertEqual(findings[0].title, "Failed console login")
+        self.assertEqual(findings[0].source_ip, "unknown")
+
+    def test_finding_records_source_ip(self):
+        event = {
+            "eventName": "CreateAccessKey",
+            "awsRegion": "eu-central-1",
+            "eventTime": "2026-06-28T08:18:00Z",
+            "sourceIPAddress": "198.51.100.10",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(findings[0].source_ip, "198.51.100.10")
 
     def test_root_activity_is_high_finding(self):
         event = {

@@ -8,6 +8,7 @@ class Finding:
     title: str
     event_name: str
     user: str
+    source_ip: str
     region: str
     event_time: str
     detail: str
@@ -18,6 +19,7 @@ class Finding:
             "title": self.title,
             "event_name": self.event_name,
             "user": self.user,
+            "source_ip": self.source_ip,
             "region": self.region,
             "event_time": self.event_time,
             "detail": self.detail,

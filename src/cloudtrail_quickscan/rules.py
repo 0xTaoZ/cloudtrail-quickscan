@@ -20,6 +20,13 @@ SECURITY_GROUP_EVENTS = {
     "RevokeSecurityGroupEgress",
 }
 
+CLOUDTRAIL_LOGGING_EVENTS = {
+    "DeleteTrail",
+    "PutEventSelectors",
+    "StopLogging",
+    "UpdateTrail",
+}
+
 COMMON_REGIONS = {
     "eu-central-1",
     "eu-west-1",
@@ -43,6 +50,7 @@ def scan_event(event: dict[str, Any]) -> list[Finding]:
         check_root_activity,
         check_iam_change,
         check_security_group_change,
+        check_cloudtrail_logging_change,
         check_uncommon_region,
     ]
 
@@ -106,6 +114,20 @@ def check_security_group_change(event: dict[str, Any]) -> Finding | None:
         severity="MED",
         title=f"Security group change: {event_name}",
         detail="Network access rules changed.",
+    )
+
+
+def check_cloudtrail_logging_change(event: dict[str, Any]) -> Finding | None:
+    event_name = event.get("eventName")
+    if event_name not in CLOUDTRAIL_LOGGING_EVENTS:
+        return None
+
+    severity = "HIGH" if event_name in {"DeleteTrail", "StopLogging"} else "MED"
+    return make_finding(
+        event,
+        severity=severity,
+        title=f"CloudTrail logging change: {event_name}",
+        detail="CloudTrail logging was disabled, deleted, or changed.",
     )
 
 

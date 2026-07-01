@@ -68,6 +68,35 @@ class RuleTest(unittest.TestCase):
         self.assertIn("IAM change: CreateAccessKey", titles)
         self.assertIn("Event from uncommon region: ap-south-1", titles)
 
+    def test_delete_trail_is_high_logging_finding(self):
+        event = {
+            "eventName": "DeleteTrail",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T10:11:00Z",
+            "sourceIPAddress": "192.0.2.50",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].severity, "HIGH")
+        self.assertEqual(findings[0].title, "CloudTrail logging change: DeleteTrail")
+
+    def test_update_trail_is_medium_logging_finding(self):
+        event = {
+            "eventName": "UpdateTrail",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T10:22:00Z",
+            "userIdentity": {"type": "AssumedRole", "arn": "arn:aws:sts::111122223333:assumed-role/Admin/student"},
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].severity, "MED")
+        self.assertEqual(findings[0].title, "CloudTrail logging change: UpdateTrail")
+
 
 if __name__ == "__main__":
     unittest.main()

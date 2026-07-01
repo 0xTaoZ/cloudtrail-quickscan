@@ -5,6 +5,8 @@ from collections import Counter
 from .parser import load_events
 from .rules import scan_events
 
+SEVERITY_ORDER = ("HIGH", "MED", "LOW")
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -45,7 +47,11 @@ def print_report(events_count: int, findings: list, summary_only: bool = False) 
     counts = Counter(finding.severity for finding in findings)
     print(
         "Severity: "
-        + ", ".join(f"{severity}={counts[severity]}" for severity in sorted(counts))
+        + ", ".join(
+            f"{severity}={counts[severity]}"
+            for severity in SEVERITY_ORDER
+            if counts[severity]
+        )
     )
 
     if summary_only:

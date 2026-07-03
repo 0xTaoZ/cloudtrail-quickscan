@@ -27,6 +27,17 @@ CLOUDTRAIL_LOGGING_EVENTS = {
     "UpdateTrail",
 }
 
+S3_BUCKET_EXPOSURE_EVENTS = {
+    "DeletePublicAccessBlock",
+    "PutBucketAcl",
+    "PutBucketPolicy",
+}
+
+PUBLIC_ACL_GROUP_URIS = {
+    "http://acs.amazonaws.com/groups/global/AllUsers",
+    "http://acs.amazonaws.com/groups/global/AuthenticatedUsers",
+}
+
 COMMON_REGIONS = {
     "eu-central-1",
     "eu-west-1",
@@ -51,6 +62,7 @@ def scan_event(event: dict[str, Any]) -> list[Finding]:
         check_iam_change,
         check_security_group_change,
         check_cloudtrail_logging_change,
+        check_s3_bucket_exposure_change,
         check_uncommon_region,
     ]
 
@@ -129,6 +141,40 @@ def check_cloudtrail_logging_change(event: dict[str, Any]) -> Finding | None:
         title=f"CloudTrail logging change: {event_name}",
         detail="CloudTrail logging was disabled, deleted, or changed.",
     )
+
+
+def check_s3_bucket_exposure_change(event: dict[str, Any]) -> Finding | None:
+    event_name = event.get("eventName")
+    if event_name not in S3_BUCKET_EXPOSURE_EVENTS:
+        return None
+
+    severity = "HIGH" if event_name == "DeletePublicAccessBlock" else "MED"
+    detail = "An S3 bucket policy, ACL, or public access block setting changed."
+
+    if has_public_acl_grant(event):
+        severity = "HIGH"
+        detail = "An S3 bucket ACL included a public or authenticated-users grant."
+
+    return make_finding(
+        event,
+        severity=severity,
+        title=f"S3 bucket exposure change: {event_name}",
+        detail=detail,
+    )
+
+
+def has_public_acl_grant(event: dict[str, Any]) -> bool:
+    request = event.get("requestParameters") or {}
+    policy = request.get("AccessControlPolicy") or {}
+    grants = policy.get("AccessControlList", {}).get("Grant", [])
+    if isinstance(grants, dict):
+        grants = [grants]
+
+    for grant in grants:
+        grantee = grant.get("Grantee", {}) if isinstance(grant, dict) else {}
+        if grantee.get("URI") in PUBLIC_ACL_GROUP_URIS:
+            return True
+    return False
 
 
 def check_uncommon_region(event: dict[str, Any]) -> Finding | None:

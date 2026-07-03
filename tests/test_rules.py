@@ -97,6 +97,50 @@ class RuleTest(unittest.TestCase):
         self.assertEqual(findings[0].severity, "MED")
         self.assertEqual(findings[0].title, "CloudTrail logging change: UpdateTrail")
 
+    def test_delete_public_access_block_is_high_s3_finding(self):
+        event = {
+            "eventName": "DeletePublicAccessBlock",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T10:45:00Z",
+            "sourceIPAddress": "198.51.100.22",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].severity, "HIGH")
+        self.assertEqual(findings[0].title, "S3 bucket exposure change: DeletePublicAccessBlock")
+
+    def test_public_bucket_acl_grant_is_high_s3_finding(self):
+        event = {
+            "eventName": "PutBucketAcl",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T11:00:00Z",
+            "sourceIPAddress": "198.51.100.23",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+            "requestParameters": {
+                "AccessControlPolicy": {
+                    "AccessControlList": {
+                        "Grant": {
+                            "Grantee": {
+                                "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+                            }
+                        }
+                    }
+                }
+            },
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].severity, "HIGH")
+        self.assertEqual(
+            findings[0].detail,
+            "An S3 bucket ACL included a public or authenticated-users grant.",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -52,6 +52,27 @@
         "type": "Root",
         "principalId": "111122223333"
       }
+    },
+    {
+      "eventTime": "2026-06-28T11:00:00Z",
+      "eventName": "PutBucketAcl",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.23",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "AccessControlPolicy": {
+          "AccessControlList": {
+            "Grant": {
+              "Grantee": {
+                "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

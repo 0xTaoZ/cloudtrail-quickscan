@@ -32,6 +32,12 @@ These notes are short on purpose. They are reminders for what I would check afte
 - Check who made the change, from which source IP, and which role or user was used.
 - Look for IAM, network, or compute activity right before and after the logging change.
 
+## S3 bucket exposure changes
+
+- Check whether the bucket should be public.
+- Review the bucket policy, ACL, and public access block settings together.
+- Look for object reads, object writes, or policy changes from the same user or IP.
+
 ## Uncommon region
 
 - Confirm if the account normally uses this AWS region.

@@ -14,6 +14,7 @@ This is not a full SIEM or a cloud security platform. It is meant to be a small 
 - security group changes
 - CloudTrail logging changes, such as `DeleteTrail` or `StopLogging`
 - S3 bucket exposure changes, such as public ACLs or public access block removal
+- denied AWS API calls, such as `AccessDenied` or `UnauthorizedOperation`
 - events from unusual AWS regions
 
 ## Quick start
@@ -40,9 +41,9 @@ The same test command runs in GitHub Actions.
 
 ```text
 CloudTrail Quickscan
-Events checked: 6
-Findings: 7
-Severity: HIGH=3, MED=3, LOW=1
+Events checked: 7
+Findings: 8
+Severity: HIGH=3, MED=4, LOW=1
 
 MED   Failed console login
 MED   IAM change: CreateAccessKey
@@ -51,6 +52,7 @@ LOW   Event from uncommon region: ap-south-1
 HIGH  Root account activity
 HIGH  CloudTrail logging change: DeleteTrail
 HIGH  S3 bucket exposure change: PutBucketAcl
+MED   API call denied: ListUsers
 ```
 
 ## Project plan

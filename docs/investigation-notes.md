@@ -38,6 +38,12 @@ These notes are short on purpose. They are reminders for what I would check afte
 - Review the bucket policy, ACL, and public access block settings together.
 - Look for object reads, object writes, or policy changes from the same user or IP.
 
+## Denied API calls
+
+- Check whether the denied action matches the user's expected role.
+- Look for repeated denied calls from the same source IP or access key.
+- Review nearby successful actions to see if the same identity found another path.
+
 ## Uncommon region
 
 - Confirm if the account normally uses this AWS region.

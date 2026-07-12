@@ -33,6 +33,13 @@ S3_BUCKET_EXPOSURE_EVENTS = {
     "PutBucketPolicy",
 }
 
+ACCESS_DENIED_ERROR_MARKERS = {
+    "AccessDenied",
+    "AccessDeniedException",
+    "Client.UnauthorizedOperation",
+    "UnauthorizedOperation",
+}
+
 PUBLIC_ACL_GROUP_URIS = {
     "http://acs.amazonaws.com/groups/global/AllUsers",
     "http://acs.amazonaws.com/groups/global/AuthenticatedUsers",
@@ -63,6 +70,7 @@ def scan_event(event: dict[str, Any]) -> list[Finding]:
         check_security_group_change,
         check_cloudtrail_logging_change,
         check_s3_bucket_exposure_change,
+        check_access_denied_error,
         check_uncommon_region,
     ]
 
@@ -175,6 +183,19 @@ def has_public_acl_grant(event: dict[str, Any]) -> bool:
         if grantee.get("URI") in PUBLIC_ACL_GROUP_URIS:
             return True
     return False
+
+
+def check_access_denied_error(event: dict[str, Any]) -> Finding | None:
+    error_code = str(event.get("errorCode", ""))
+    if not any(marker in error_code for marker in ACCESS_DENIED_ERROR_MARKERS):
+        return None
+
+    return make_finding(
+        event,
+        severity="MED",
+        title=f"API call denied: {event.get('eventName', 'unknown')}",
+        detail="An AWS API call was denied. Repeated denied calls can show probing or missing permissions.",
+    )
 
 
 def check_uncommon_region(event: dict[str, Any]) -> Finding | None:

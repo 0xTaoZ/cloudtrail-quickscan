@@ -141,6 +141,27 @@ class RuleTest(unittest.TestCase):
             "An S3 bucket ACL included a public or authenticated-users grant.",
         )
 
+    def test_access_denied_error_is_medium_finding(self):
+        event = {
+            "eventName": "ListUsers",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T11:20:00Z",
+            "sourceIPAddress": "198.51.100.24",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+            "errorCode": "AccessDenied",
+            "errorMessage": "User is not authorized to perform iam:ListUsers",
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].severity, "MED")
+        self.assertEqual(findings[0].title, "API call denied: ListUsers")
+        self.assertEqual(
+            findings[0].detail,
+            "An AWS API call was denied. Repeated denied calls can show probing or missing permissions.",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

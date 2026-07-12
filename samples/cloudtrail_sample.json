@@ -73,6 +73,18 @@
           }
         }
       }
+    },
+    {
+      "eventTime": "2026-06-28T11:20:00Z",
+      "eventName": "ListUsers",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.24",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "errorCode": "AccessDenied",
+      "errorMessage": "User is not authorized to perform iam:ListUsers"
     }
   ]
 }

@@ -8,6 +8,12 @@ These notes are short on purpose. They are reminders for what I would check afte
 - Look for repeated failures from the same user or IP.
 - Check if a successful login happened soon after the failures.
 
+## Console login without MFA
+
+- Confirm whether the user or role should require MFA.
+- Check if this was a break-glass login or a lab account.
+- Review nearby IAM changes from the same source IP.
+
 ## Root account activity
 
 - Confirm if the action was planned.

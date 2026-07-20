@@ -162,6 +162,27 @@ class RuleTest(unittest.TestCase):
             "An AWS API call was denied. Repeated denied calls can show probing or missing permissions.",
         )
 
+    def test_console_login_without_mfa_is_medium_finding(self):
+        event = {
+            "eventName": "ConsoleLogin",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T11:45:00Z",
+            "sourceIPAddress": "198.51.100.25",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+            "responseElements": {"ConsoleLogin": "Success"},
+            "additionalEventData": {"MFAUsed": "No"},
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].severity, "MED")
+        self.assertEqual(findings[0].title, "Console login without MFA")
+        self.assertEqual(
+            findings[0].detail,
+            "A console login succeeded without MFA. Confirm whether this identity should require MFA.",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

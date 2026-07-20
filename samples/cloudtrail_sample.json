@@ -85,6 +85,22 @@
       },
       "errorCode": "AccessDenied",
       "errorMessage": "User is not authorized to perform iam:ListUsers"
+    },
+    {
+      "eventTime": "2026-06-28T11:45:00Z",
+      "eventName": "ConsoleLogin",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.25",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "responseElements": {
+        "ConsoleLogin": "Success"
+      },
+      "additionalEventData": {
+        "MFAUsed": "No"
+      }
     }
   ]
 }

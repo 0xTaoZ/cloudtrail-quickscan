@@ -65,6 +65,7 @@ def scan_events(events: list[dict[str, Any]]) -> list[Finding]:
 def scan_event(event: dict[str, Any]) -> list[Finding]:
     checks = [
         check_failed_console_login,
+        check_console_login_without_mfa,
         check_root_activity,
         check_iam_change,
         check_security_group_change,
@@ -95,6 +96,23 @@ def check_failed_console_login(event: dict[str, Any]) -> Finding | None:
         severity="MED",
         title="Failed console login",
         detail="A console login failed. This can be normal, but repeated failures are worth checking.",
+    )
+
+
+def check_console_login_without_mfa(event: dict[str, Any]) -> Finding | None:
+    if event.get("eventName") != "ConsoleLogin":
+        return None
+
+    response = event.get("responseElements") or {}
+    additional = event.get("additionalEventData") or {}
+    if response.get("ConsoleLogin") != "Success" or additional.get("MFAUsed") != "No":
+        return None
+
+    return make_finding(
+        event,
+        severity="MED",
+        title="Console login without MFA",
+        detail="A console login succeeded without MFA. Confirm whether this identity should require MFA.",
     )
 
 

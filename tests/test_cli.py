@@ -33,7 +33,7 @@ class CliTest(unittest.TestCase):
         )
 
         self.assertIn("CloudTrail Quickscan", result.stdout)
-        self.assertIn("Events checked: 7", result.stdout)
+        self.assertIn("Events checked: 8", result.stdout)
 
     def test_summary_orders_severity_by_priority(self):
         findings = [

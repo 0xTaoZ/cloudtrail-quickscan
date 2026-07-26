@@ -45,6 +45,13 @@ PUBLIC_ACL_GROUP_URIS = {
     "http://acs.amazonaws.com/groups/global/AuthenticatedUsers",
 }
 
+ADMIN_PORTS = {
+    22: "SSH",
+    3389: "RDP",
+}
+
+PUBLIC_CIDRS = {"0.0.0.0/0", "::/0"}
+
 COMMON_REGIONS = {
     "eu-central-1",
     "eu-west-1",
@@ -69,6 +76,7 @@ def scan_event(event: dict[str, Any]) -> list[Finding]:
         check_root_activity,
         check_iam_change,
         check_security_group_change,
+        check_public_admin_port_ingress,
         check_cloudtrail_logging_change,
         check_s3_bucket_exposure_change,
         check_access_denied_error,
@@ -153,6 +161,57 @@ def check_security_group_change(event: dict[str, Any]) -> Finding | None:
         title=f"Security group change: {event_name}",
         detail="Network access rules changed.",
     )
+
+
+def check_public_admin_port_ingress(event: dict[str, Any]) -> Finding | None:
+    if event.get("eventName") != "AuthorizeSecurityGroupIngress":
+        return None
+
+    for permission in get_ip_permissions(event):
+        admin_service = get_admin_service(permission)
+        if admin_service and has_public_range(permission):
+            return make_finding(
+                event,
+                severity="HIGH",
+                title=f"Public admin-port ingress: {admin_service}",
+                detail=(
+                    f"{admin_service} was opened to a public IPv4 or IPv6 range. "
+                    "Confirm this is expected and restricted by other controls."
+                ),
+            )
+    return None
+
+
+def get_ip_permissions(event: dict[str, Any]) -> list[dict[str, Any]]:
+    request = event.get("requestParameters") or {}
+    permissions = request.get("ipPermissions") or {}
+    return as_list(permissions.get("items", permissions))
+
+
+def get_admin_service(permission: dict[str, Any]) -> str | None:
+    from_port = permission.get("fromPort")
+    to_port = permission.get("toPort")
+    for port, service in ADMIN_PORTS.items():
+        if from_port is not None and to_port is not None and from_port <= port <= to_port:
+            return service
+    return None
+
+
+def has_public_range(permission: dict[str, Any]) -> bool:
+    for range_key, cidr_key in (("ipRanges", "cidrIp"), ("ipv6Ranges", "cidrIpv6")):
+        ranges = permission.get(range_key) or {}
+        for item in as_list(ranges.get("items", ranges)):
+            if isinstance(item, dict) and item.get(cidr_key) in PUBLIC_CIDRS:
+                return True
+    return False
+
+
+def as_list(value: Any) -> list[Any]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return value
+    return [value]
 
 
 def check_cloudtrail_logging_change(event: dict[str, Any]) -> Finding | None:

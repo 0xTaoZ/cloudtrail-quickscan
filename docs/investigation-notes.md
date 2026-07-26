@@ -32,6 +32,12 @@ These notes are short on purpose. They are reminders for what I would check afte
 - Review the port and protocol.
 - Compare the change with the expected lab or production setup.
 
+## Public admin-port ingress
+
+- Confirm whether SSH or RDP should be reachable from the public internet.
+- Check if access is narrowed by a VPN, bastion host, source-prefix list, or temporary change window.
+- Review nearby instance, IAM, and login events from the same user or source IP.
+
 ## CloudTrail logging changes
 
 - Confirm if the logging change was planned maintenance.

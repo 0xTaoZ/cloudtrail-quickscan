@@ -183,6 +183,99 @@ class RuleTest(unittest.TestCase):
             "A console login succeeded without MFA. Confirm whether this identity should require MFA.",
         )
 
+    def test_public_ssh_security_group_ingress_is_high_finding(self):
+        event = {
+            "eventName": "AuthorizeSecurityGroupIngress",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T12:10:00Z",
+            "sourceIPAddress": "198.51.100.26",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+            "requestParameters": {
+                "ipPermissions": {
+                    "items": [
+                        {
+                            "fromPort": 22,
+                            "toPort": 22,
+                            "ipRanges": {
+                                "items": [{"cidrIp": "0.0.0.0/0"}],
+                            },
+                        }
+                    ]
+                }
+            },
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(len(findings), 2)
+        self.assertTrue(
+            any(
+                finding.severity == "HIGH"
+                and finding.title == "Public admin-port ingress: SSH"
+                for finding in findings
+            )
+        )
+
+    def test_public_ipv6_rdp_security_group_ingress_is_high_finding(self):
+        event = {
+            "eventName": "AuthorizeSecurityGroupIngress",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T12:20:00Z",
+            "sourceIPAddress": "198.51.100.27",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+            "requestParameters": {
+                "ipPermissions": {
+                    "items": [
+                        {
+                            "fromPort": 3389,
+                            "toPort": 3389,
+                            "ipv6Ranges": {
+                                "items": [{"cidrIpv6": "::/0"}],
+                            },
+                        }
+                    ]
+                }
+            },
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(len(findings), 2)
+        self.assertTrue(
+            any(
+                finding.severity == "HIGH"
+                and finding.title == "Public admin-port ingress: RDP"
+                for finding in findings
+            )
+        )
+
+    def test_private_admin_port_security_group_ingress_is_not_public_finding(self):
+        event = {
+            "eventName": "AuthorizeSecurityGroupIngress",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T12:30:00Z",
+            "sourceIPAddress": "198.51.100.28",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+            "requestParameters": {
+                "ipPermissions": {
+                    "items": [
+                        {
+                            "fromPort": 22,
+                            "toPort": 22,
+                            "ipRanges": {
+                                "items": [{"cidrIp": "10.0.0.0/8"}],
+                            },
+                        }
+                    ]
+                }
+            },
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].title, "Security group change: AuthorizeSecurityGroupIngress")
+
 
 if __name__ == "__main__":
     unittest.main()

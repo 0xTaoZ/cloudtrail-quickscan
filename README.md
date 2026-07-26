@@ -16,6 +16,7 @@ This is not a full SIEM or a cloud security platform. It is meant to be a small 
 - S3 bucket exposure changes, such as public ACLs or public access block removal
 - denied AWS API calls, such as `AccessDenied` or `UnauthorizedOperation`
 - successful console logins without MFA
+- public SSH or RDP ingress in security group changes
 - events from unusual AWS regions
 
 ## Quick start
@@ -42,9 +43,9 @@ The same test command runs in GitHub Actions.
 
 ```text
 CloudTrail Quickscan
-Events checked: 8
-Findings: 9
-Severity: HIGH=3, MED=5, LOW=1
+Events checked: 9
+Findings: 11
+Severity: HIGH=4, MED=6, LOW=1
 
 MED   Failed console login
 MED   IAM change: CreateAccessKey
@@ -55,6 +56,8 @@ HIGH  CloudTrail logging change: DeleteTrail
 HIGH  S3 bucket exposure change: PutBucketAcl
 MED   API call denied: ListUsers
 MED   Console login without MFA
+MED   Security group change: AuthorizeSecurityGroupIngress
+HIGH  Public admin-port ingress: SSH
 ```
 
 ## Project plan

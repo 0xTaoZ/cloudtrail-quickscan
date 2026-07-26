@@ -101,6 +101,33 @@
       "additionalEventData": {
         "MFAUsed": "No"
       }
+    },
+    {
+      "eventTime": "2026-06-28T12:10:00Z",
+      "eventName": "AuthorizeSecurityGroupIngress",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.26",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "ipPermissions": {
+          "items": [
+            {
+              "fromPort": 22,
+              "toPort": 22,
+              "ipRanges": {
+                "items": [
+                  {
+                    "cidrIp": "0.0.0.0/0"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
     }
   ]
 }

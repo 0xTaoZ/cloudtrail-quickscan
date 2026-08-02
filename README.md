@@ -10,6 +10,7 @@ This is not a full SIEM or a cloud security platform. It is meant to be a small 
 
 - failed console logins
 - root account activity
+- root access key creation
 - IAM policy and access key changes
 - security group changes
 - CloudTrail logging changes, such as `DeleteTrail` or `StopLogging`
@@ -43,11 +44,14 @@ The same test command runs in GitHub Actions.
 
 ```text
 CloudTrail Quickscan
-Events checked: 9
-Findings: 11
-Severity: HIGH=4, MED=6, LOW=1
+Events checked: 10
+Findings: 14
+Severity: HIGH=6, MED=7, LOW=1
 
 MED   Failed console login
+MED   IAM change: CreateAccessKey
+HIGH  Root account activity
+HIGH  Root access key created
 MED   IAM change: CreateAccessKey
 MED   Security group change: AuthorizeSecurityGroupIngress
 LOW   Event from uncommon region: ap-south-1

@@ -24,6 +24,16 @@
       }
     },
     {
+      "eventTime": "2026-06-28T08:22:00Z",
+      "eventName": "CreateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.31",
+      "userIdentity": {
+        "type": "Root",
+        "principalId": "111122223333"
+      }
+    },
+    {
       "eventTime": "2026-06-28T09:04:00Z",
       "eventName": "AuthorizeSecurityGroupIngress",
       "awsRegion": "eu-west-1",

@@ -74,6 +74,7 @@ def scan_event(event: dict[str, Any]) -> list[Finding]:
         check_failed_console_login,
         check_console_login_without_mfa,
         check_root_activity,
+        check_root_access_key_creation,
         check_iam_change,
         check_security_group_change,
         check_public_admin_port_ingress,
@@ -134,6 +135,19 @@ def check_root_activity(event: dict[str, Any]) -> Finding | None:
         severity="HIGH",
         title="Root account activity",
         detail="The root account was used. This should be rare in most AWS accounts.",
+    )
+
+
+def check_root_access_key_creation(event: dict[str, Any]) -> Finding | None:
+    identity = event.get("userIdentity") or {}
+    if event.get("eventName") != "CreateAccessKey" or identity.get("type") != "Root":
+        return None
+
+    return make_finding(
+        event,
+        severity="HIGH",
+        title="Root access key created",
+        detail="A root access key was created. Root long-term keys should normally not exist.",
     )
 
 

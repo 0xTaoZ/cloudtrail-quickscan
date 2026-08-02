@@ -20,6 +20,12 @@ These notes are short on purpose. They are reminders for what I would check afte
 - Check if MFA is enabled for the root account.
 - Review nearby events from the same source IP.
 
+## Root access key creation
+
+- Check whether the root account has active long-term access keys.
+- Rotate or delete root access keys if they are not part of an approved emergency process.
+- Review immediate follow-up API calls from the same source IP or access key.
+
 ## IAM changes
 
 - Check who made the change and why.

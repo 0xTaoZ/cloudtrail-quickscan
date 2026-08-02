@@ -183,6 +183,40 @@ class RuleTest(unittest.TestCase):
             "A console login succeeded without MFA. Confirm whether this identity should require MFA.",
         )
 
+    def test_root_access_key_creation_is_high_finding(self):
+        event = {
+            "eventName": "CreateAccessKey",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T12:00:00Z",
+            "sourceIPAddress": "198.51.100.29",
+            "userIdentity": {"type": "Root", "principalId": "111122223333"},
+        }
+
+        findings = scan_event(event)
+
+        self.assertTrue(
+            any(
+                finding.severity == "HIGH"
+                and finding.title == "Root access key created"
+                for finding in findings
+            )
+        )
+
+    def test_iam_user_access_key_creation_keeps_generic_iam_finding(self):
+        event = {
+            "eventName": "CreateAccessKey",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T12:05:00Z",
+            "sourceIPAddress": "198.51.100.30",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+        }
+
+        findings = scan_event(event)
+        titles = [finding.title for finding in findings]
+
+        self.assertIn("IAM change: CreateAccessKey", titles)
+        self.assertNotIn("Root access key created", titles)
+
     def test_public_ssh_security_group_ingress_is_high_finding(self):
         event = {
             "eventName": "AuthorizeSecurityGroupIngress",

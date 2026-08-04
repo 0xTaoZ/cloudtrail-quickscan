@@ -34,6 +34,20 @@
       }
     },
     {
+      "eventTime": "2026-06-28T08:40:00Z",
+      "eventName": "AttachRolePolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.32",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "roleName": "break-glass-role",
+        "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+      }
+    },
+    {
       "eventTime": "2026-06-28T09:04:00Z",
       "eventName": "AuthorizeSecurityGroupIngress",
       "awsRegion": "eu-west-1",

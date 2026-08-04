@@ -12,6 +12,7 @@ This is not a full SIEM or a cloud security platform. It is meant to be a small 
 - root account activity
 - root access key creation
 - IAM policy and access key changes
+- AWS managed `AdministratorAccess` policy attachments
 - security group changes
 - CloudTrail logging changes, such as `DeleteTrail` or `StopLogging`
 - S3 bucket exposure changes, such as public ACLs or public access block removal
@@ -44,15 +45,17 @@ The same test command runs in GitHub Actions.
 
 ```text
 CloudTrail Quickscan
-Events checked: 10
-Findings: 14
-Severity: HIGH=6, MED=7, LOW=1
+Events checked: 11
+Findings: 16
+Severity: HIGH=7, MED=8, LOW=1
 
 MED   Failed console login
 MED   IAM change: CreateAccessKey
 HIGH  Root account activity
 HIGH  Root access key created
 MED   IAM change: CreateAccessKey
+HIGH  AdministratorAccess policy attached
+MED   IAM change: AttachRolePolicy
 MED   Security group change: AuthorizeSecurityGroupIngress
 LOW   Event from uncommon region: ap-south-1
 HIGH  Root account activity

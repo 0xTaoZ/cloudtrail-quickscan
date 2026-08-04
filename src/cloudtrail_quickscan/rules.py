@@ -3,15 +3,20 @@ from typing import Any
 from .models import Finding, get_user_name
 
 IAM_CHANGE_EVENTS = {
+    "AttachGroupPolicy",
+    "AttachRolePolicy",
     "AttachUserPolicy",
     "CreateAccessKey",
     "CreatePolicy",
     "CreateUser",
+    "PutGroupPolicy",
     "DeleteUserPolicy",
     "DetachUserPolicy",
     "PutRolePolicy",
     "PutUserPolicy",
 }
+
+ADMINISTRATOR_ACCESS_POLICY_ARN = "arn:aws:iam::aws:policy/AdministratorAccess"
 
 SECURITY_GROUP_EVENTS = {
     "AuthorizeSecurityGroupIngress",
@@ -75,6 +80,7 @@ def scan_event(event: dict[str, Any]) -> list[Finding]:
         check_console_login_without_mfa,
         check_root_activity,
         check_root_access_key_creation,
+        check_administrator_policy_attachment,
         check_iam_change,
         check_security_group_change,
         check_public_admin_port_ingress,
@@ -148,6 +154,26 @@ def check_root_access_key_creation(event: dict[str, Any]) -> Finding | None:
         severity="HIGH",
         title="Root access key created",
         detail="A root access key was created. Root long-term keys should normally not exist.",
+    )
+
+
+def check_administrator_policy_attachment(event: dict[str, Any]) -> Finding | None:
+    if event.get("eventName") not in {
+        "AttachGroupPolicy",
+        "AttachRolePolicy",
+        "AttachUserPolicy",
+    }:
+        return None
+
+    request = event.get("requestParameters") or {}
+    if request.get("policyArn") != ADMINISTRATOR_ACCESS_POLICY_ARN:
+        return None
+
+    return make_finding(
+        event,
+        severity="HIGH",
+        title="AdministratorAccess policy attached",
+        detail="The AWS managed AdministratorAccess policy was attached to an IAM identity.",
     )
 
 

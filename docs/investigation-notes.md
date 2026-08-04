@@ -32,6 +32,12 @@ These notes are short on purpose. They are reminders for what I would check afte
 - Review the policy or access key that was created or changed.
 - Look for follow-up actions using the new permission.
 
+## AdministratorAccess policy attachment
+
+- Confirm whether the identity should have full administrative permissions.
+- Check if the attachment was temporary, approved, and removed after use.
+- Review nearby console logins and API calls from the same user or source IP.
+
 ## Security group changes
 
 - Check if the change opened access to `0.0.0.0/0`.

@@ -217,6 +217,29 @@ class RuleTest(unittest.TestCase):
         self.assertIn("IAM change: CreateAccessKey", titles)
         self.assertNotIn("Root access key created", titles)
 
+    def test_administrator_policy_attachment_is_high_finding(self):
+        event = {
+            "eventName": "AttachRolePolicy",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T12:08:00Z",
+            "sourceIPAddress": "198.51.100.32",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+            "requestParameters": {
+                "roleName": "break-glass-role",
+                "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess",
+            },
+        }
+
+        findings = scan_event(event)
+
+        self.assertTrue(
+            any(
+                finding.severity == "HIGH"
+                and finding.title == "AdministratorAccess policy attached"
+                for finding in findings
+            )
+        )
+
     def test_public_ssh_security_group_ingress_is_high_finding(self):
         event = {
             "eventName": "AuthorizeSecurityGroupIngress",

@@ -24,6 +24,21 @@
       }
     },
     {
+      "eventTime": "2026-06-28T08:20:00Z",
+      "eventName": "UpdateAccessKey",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "198.51.100.10",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "userName": "backup-user",
+        "accessKeyId": "AKIAEXAMPLE",
+        "status": "Inactive"
+      }
+    },
+    {
       "eventTime": "2026-06-28T08:22:00Z",
       "eventName": "CreateAccessKey",
       "awsRegion": "us-east-1",

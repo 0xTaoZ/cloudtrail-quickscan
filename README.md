@@ -11,6 +11,7 @@ This is not a full SIEM or a cloud security platform. It is meant to be a small 
 - failed console logins
 - root account activity
 - root access key creation
+- IAM access key deactivation or deletion
 - IAM policy and access key changes
 - AWS managed `AdministratorAccess` policy attachments
 - security group changes
@@ -45,12 +46,13 @@ The same test command runs in GitHub Actions.
 
 ```text
 CloudTrail Quickscan
-Events checked: 11
-Findings: 16
-Severity: HIGH=7, MED=8, LOW=1
+Events checked: 12
+Findings: 17
+Severity: HIGH=7, MED=9, LOW=1
 
 MED   Failed console login
 MED   IAM change: CreateAccessKey
+MED   Access key deactivated
 HIGH  Root account activity
 HIGH  Root access key created
 MED   IAM change: CreateAccessKey

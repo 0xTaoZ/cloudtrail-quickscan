@@ -217,6 +217,53 @@ class RuleTest(unittest.TestCase):
         self.assertIn("IAM change: CreateAccessKey", titles)
         self.assertNotIn("Root access key created", titles)
 
+    def test_access_key_deactivation_is_medium_finding(self):
+        event = {
+            "eventName": "UpdateAccessKey",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T12:07:00Z",
+            "sourceIPAddress": "198.51.100.31",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+            "requestParameters": {
+                "userName": "backup-user",
+                "accessKeyId": "AKIAEXAMPLE",
+                "status": "Inactive",
+            },
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].severity, "MED")
+        self.assertEqual(findings[0].title, "Access key deactivated")
+        self.assertEqual(
+            findings[0].detail,
+            "An IAM access key was deactivated. Confirm this was expected rotation or response work.",
+        )
+
+    def test_access_key_deletion_is_medium_finding(self):
+        event = {
+            "eventName": "DeleteAccessKey",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T12:07:30Z",
+            "sourceIPAddress": "198.51.100.31",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+            "requestParameters": {
+                "userName": "backup-user",
+                "accessKeyId": "AKIAEXAMPLE",
+            },
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].severity, "MED")
+        self.assertEqual(findings[0].title, "Access key deleted")
+        self.assertEqual(
+            findings[0].detail,
+            "An IAM access key was deleted. Confirm this was expected cleanup or incident response work.",
+        )
+
     def test_administrator_policy_attachment_is_high_finding(self):
         event = {
             "eventName": "AttachRolePolicy",

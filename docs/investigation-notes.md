@@ -26,6 +26,12 @@ These notes are short on purpose. They are reminders for what I would check afte
 - Rotate or delete root access keys if they are not part of an approved emergency process.
 - Review immediate follow-up API calls from the same source IP or access key.
 
+## Access key deactivation or deletion
+
+- Confirm whether the key change was planned rotation, cleanup, or incident response.
+- Check which user owned the key and whether replacement credentials were created nearby.
+- Review follow-up API calls from the same identity or source IP.
+
 ## IAM changes
 
 - Check who made the change and why.

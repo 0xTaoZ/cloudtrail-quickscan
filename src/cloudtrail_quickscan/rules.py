@@ -80,6 +80,7 @@ def scan_event(event: dict[str, Any]) -> list[Finding]:
         check_console_login_without_mfa,
         check_root_activity,
         check_root_access_key_creation,
+        check_access_key_lifecycle_change,
         check_administrator_policy_attachment,
         check_iam_change,
         check_security_group_change,
@@ -155,6 +156,29 @@ def check_root_access_key_creation(event: dict[str, Any]) -> Finding | None:
         title="Root access key created",
         detail="A root access key was created. Root long-term keys should normally not exist.",
     )
+
+
+def check_access_key_lifecycle_change(event: dict[str, Any]) -> Finding | None:
+    event_name = event.get("eventName")
+    request = event.get("requestParameters") or {}
+
+    if event_name == "UpdateAccessKey" and request.get("status") == "Inactive":
+        return make_finding(
+            event,
+            severity="MED",
+            title="Access key deactivated",
+            detail="An IAM access key was deactivated. Confirm this was expected rotation or response work.",
+        )
+
+    if event_name == "DeleteAccessKey":
+        return make_finding(
+            event,
+            severity="MED",
+            title="Access key deleted",
+            detail="An IAM access key was deleted. Confirm this was expected cleanup or incident response work.",
+        )
+
+    return None
 
 
 def check_administrator_policy_attachment(event: dict[str, Any]) -> Finding | None:

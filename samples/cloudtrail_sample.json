@@ -39,6 +39,20 @@
       }
     },
     {
+      "eventTime": "2026-06-28T08:21:00Z",
+      "eventName": "CreateLoginProfile",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "198.51.100.33",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "userName": "backup-user",
+        "passwordResetRequired": true
+      }
+    },
+    {
       "eventTime": "2026-06-28T08:22:00Z",
       "eventName": "CreateAccessKey",
       "awsRegion": "us-east-1",

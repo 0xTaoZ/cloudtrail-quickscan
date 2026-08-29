@@ -32,6 +32,12 @@ These notes are short on purpose. They are reminders for what I would check afte
 - Check which user owned the key and whether replacement credentials were created nearby.
 - Review follow-up API calls from the same identity or source IP.
 
+## Console password creation
+
+- Confirm whether the IAM user should have console access.
+- Check whether the password reset was required and completed.
+- Review nearby permission changes or console logins for the same user.
+
 ## IAM changes
 
 - Check who made the change and why.

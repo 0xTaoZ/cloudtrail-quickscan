@@ -264,6 +264,29 @@ class RuleTest(unittest.TestCase):
             "An IAM access key was deleted. Confirm this was expected cleanup or incident response work.",
         )
 
+    def test_console_password_creation_is_medium_finding(self):
+        event = {
+            "eventName": "CreateLoginProfile",
+            "awsRegion": "us-east-1",
+            "eventTime": "2026-06-28T12:08:30Z",
+            "sourceIPAddress": "198.51.100.33",
+            "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+            "requestParameters": {
+                "userName": "backup-user",
+                "passwordResetRequired": True,
+            },
+        }
+
+        findings = scan_event(event)
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].severity, "MED")
+        self.assertEqual(findings[0].title, "Console password created")
+        self.assertEqual(
+            findings[0].detail,
+            "An IAM user console password was created. Confirm this user should have console access.",
+        )
+
     def test_administrator_policy_attachment_is_high_finding(self):
         event = {
             "eventName": "AttachRolePolicy",

@@ -81,6 +81,7 @@ def scan_event(event: dict[str, Any]) -> list[Finding]:
         check_root_activity,
         check_root_access_key_creation,
         check_access_key_lifecycle_change,
+        check_console_password_creation,
         check_administrator_policy_attachment,
         check_iam_change,
         check_security_group_change,
@@ -179,6 +180,18 @@ def check_access_key_lifecycle_change(event: dict[str, Any]) -> Finding | None:
         )
 
     return None
+
+
+def check_console_password_creation(event: dict[str, Any]) -> Finding | None:
+    if event.get("eventName") != "CreateLoginProfile":
+        return None
+
+    return make_finding(
+        event,
+        severity="MED",
+        title="Console password created",
+        detail="An IAM user console password was created. Confirm this user should have console access.",
+    )
 
 
 def check_administrator_policy_attachment(event: dict[str, Any]) -> Finding | None:

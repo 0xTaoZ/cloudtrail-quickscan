@@ -53,6 +53,20 @@
       }
     },
     {
+      "eventTime": "2026-06-28T08:21:30Z",
+      "eventName": "DeactivateMFADevice",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "198.51.100.34",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "userName": "backup-user",
+        "serialNumber": "arn:aws:iam::111122223333:mfa/backup-user"
+      }
+    },
+    {
       "eventTime": "2026-06-28T08:22:00Z",
       "eventName": "CreateAccessKey",
       "awsRegion": "us-east-1",

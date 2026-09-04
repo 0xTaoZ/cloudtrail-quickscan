@@ -287,6 +287,43 @@ class RuleTest(unittest.TestCase):
             "An IAM user console password was created. Confirm this user should have console access.",
         )
 
+    def test_mfa_device_removal_is_medium_finding(self):
+        events = [
+            {
+                "eventName": "DeactivateMFADevice",
+                "awsRegion": "us-east-1",
+                "eventTime": "2026-06-28T12:09:00Z",
+                "sourceIPAddress": "198.51.100.34",
+                "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+                "requestParameters": {"userName": "backup-user"},
+            },
+            {
+                "eventName": "DeleteVirtualMFADevice",
+                "awsRegion": "us-east-1",
+                "eventTime": "2026-06-28T12:09:30Z",
+                "sourceIPAddress": "198.51.100.34",
+                "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+                "requestParameters": {
+                    "serialNumber": "arn:aws:iam::111122223333:mfa/backup-user"
+                },
+            },
+        ]
+
+        findings = scan_events(events)
+
+        self.assertEqual([finding.severity for finding in findings], ["MED", "MED"])
+        self.assertEqual(
+            [finding.title for finding in findings],
+            [
+                "MFA device removed: DeactivateMFADevice",
+                "MFA device removed: DeleteVirtualMFADevice",
+            ],
+        )
+        self.assertEqual(
+            findings[0].detail,
+            "An IAM MFA device was deactivated or deleted. Confirm this was expected account recovery or cleanup.",
+        )
+
     def test_administrator_policy_attachment_is_high_finding(self):
         event = {
             "eventName": "AttachRolePolicy",

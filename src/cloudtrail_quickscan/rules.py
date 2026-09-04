@@ -38,6 +38,11 @@ S3_BUCKET_EXPOSURE_EVENTS = {
     "PutBucketPolicy",
 }
 
+MFA_DEVICE_REMOVAL_EVENTS = {
+    "DeactivateMFADevice",
+    "DeleteVirtualMFADevice",
+}
+
 ACCESS_DENIED_ERROR_MARKERS = {
     "AccessDenied",
     "AccessDeniedException",
@@ -82,6 +87,7 @@ def scan_event(event: dict[str, Any]) -> list[Finding]:
         check_root_access_key_creation,
         check_access_key_lifecycle_change,
         check_console_password_creation,
+        check_mfa_device_removal,
         check_administrator_policy_attachment,
         check_iam_change,
         check_security_group_change,
@@ -191,6 +197,22 @@ def check_console_password_creation(event: dict[str, Any]) -> Finding | None:
         severity="MED",
         title="Console password created",
         detail="An IAM user console password was created. Confirm this user should have console access.",
+    )
+
+
+def check_mfa_device_removal(event: dict[str, Any]) -> Finding | None:
+    event_name = event.get("eventName")
+    if event_name not in MFA_DEVICE_REMOVAL_EVENTS:
+        return None
+
+    return make_finding(
+        event,
+        severity="MED",
+        title=f"MFA device removed: {event_name}",
+        detail=(
+            "An IAM MFA device was deactivated or deleted. "
+            "Confirm this was expected account recovery or cleanup."
+        ),
     )
 
 

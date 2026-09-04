@@ -38,6 +38,12 @@ These notes are short on purpose. They are reminders for what I would check afte
 - Check whether the password reset was required and completed.
 - Review nearby permission changes or console logins for the same user.
 
+## MFA device removal
+
+- Confirm whether this was expected account recovery or device cleanup.
+- Check if a replacement MFA device was enrolled shortly after.
+- Review nearby console logins and permission changes for the same user.
+
 ## IAM changes
 
 - Check who made the change and why.

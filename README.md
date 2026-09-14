@@ -36,6 +36,8 @@ JSON output for scripts:
 PYTHONPATH=src python3 -m cloudtrail_quickscan samples/cloudtrail_sample.json --json
 ```
 
+The JSON report includes compact source IP and user summary counts for quick triage.
+
 Run tests:
 
 ```bash
@@ -51,6 +53,8 @@ CloudTrail Quickscan
 Events checked: 14
 Findings: 19
 Severity: HIGH=7, MED=11, LOW=1
+Top source IPs: 198.51.100.10=3, 198.51.100.31=3, 198.51.100.32=2
+Top users: student-lab=13, 111122223333=5, arn:aws:sts::111122223333:assumed-role/AdminRole/student=1
 
 MED   Failed console login
 MED   IAM change: CreateAccessKey

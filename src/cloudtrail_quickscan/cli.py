@@ -6,6 +6,7 @@ from .parser import load_events
 from .rules import scan_events
 
 SEVERITY_ORDER = ("HIGH", "MED", "LOW")
+SUMMARY_LIMIT = 3
 
 
 def main() -> None:
@@ -53,6 +54,8 @@ def print_report(events_count: int, findings: list, summary_only: bool = False) 
             if counts[severity]
         )
     )
+    print(f"Top source IPs: {format_counts(finding.source_ip for finding in findings)}")
+    print(f"Top users: {format_counts(finding.user for finding in findings)}")
 
     if summary_only:
         return
@@ -69,12 +72,25 @@ def print_report(events_count: int, findings: list, summary_only: bool = False) 
 
 
 def print_json_report(events_count: int, findings: list) -> None:
+    source_ips = Counter(finding.source_ip for finding in findings)
+    users = Counter(finding.user for finding in findings)
     report = {
         "events_checked": events_count,
         "findings_count": len(findings),
+        "summary": {
+            "source_ips": dict(source_ips.most_common(SUMMARY_LIMIT)),
+            "users": dict(users.most_common(SUMMARY_LIMIT)),
+        },
         "findings": [finding.to_dict() for finding in findings],
     }
     print(json.dumps(report, indent=2))
+
+
+def format_counts(values) -> str:
+    return ", ".join(
+        f"{value}={count}"
+        for value, count in Counter(values).most_common(SUMMARY_LIMIT)
+    )
 
 
 if __name__ == "__main__":

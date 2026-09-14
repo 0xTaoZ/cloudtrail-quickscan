@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import sys
@@ -6,7 +7,7 @@ from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
 
-from cloudtrail_quickscan.cli import print_report
+from cloudtrail_quickscan.cli import print_json_report, print_report
 from cloudtrail_quickscan.models import Finding
 
 
@@ -74,6 +75,83 @@ class CliTest(unittest.TestCase):
             print_report(events_count=3, findings=findings, summary_only=True)
 
         self.assertIn("Severity: HIGH=1, MED=1, LOW=1", output.getvalue())
+
+    def test_summary_shows_top_source_ips_and_users(self):
+        findings = [
+            Finding(
+                "MED",
+                "IAM change",
+                "CreateAccessKey",
+                "student",
+                "198.51.100.1",
+                "us-east-1",
+                "2026-06-28T08:18:00Z",
+                "note",
+            ),
+            Finding(
+                "MED",
+                "Access key deactivated",
+                "UpdateAccessKey",
+                "student",
+                "198.51.100.1",
+                "us-east-1",
+                "2026-06-28T08:20:00Z",
+                "note",
+            ),
+            Finding(
+                "HIGH",
+                "Root activity",
+                "ListBuckets",
+                "root",
+                "192.0.2.50",
+                "us-east-1",
+                "2026-06-28T10:11:00Z",
+                "note",
+            ),
+        ]
+        output = StringIO()
+
+        with redirect_stdout(output):
+            print_report(events_count=3, findings=findings, summary_only=True)
+
+        text = output.getvalue()
+        self.assertIn("Top source IPs: 198.51.100.1=2, 192.0.2.50=1", text)
+        self.assertIn("Top users: student=2, root=1", text)
+
+    def test_json_report_includes_summary_counts(self):
+        findings = [
+            Finding(
+                "MED",
+                "IAM change",
+                "CreateAccessKey",
+                "student",
+                "198.51.100.1",
+                "us-east-1",
+                "2026-06-28T08:18:00Z",
+                "note",
+            ),
+            Finding(
+                "HIGH",
+                "Root activity",
+                "ListBuckets",
+                "root",
+                "192.0.2.50",
+                "us-east-1",
+                "2026-06-28T10:11:00Z",
+                "note",
+            ),
+        ]
+        output = StringIO()
+
+        with redirect_stdout(output):
+            print_json_report(events_count=2, findings=findings)
+
+        report = json.loads(output.getvalue())
+        self.assertEqual(
+            report["summary"]["source_ips"],
+            {"198.51.100.1": 1, "192.0.2.50": 1},
+        )
+        self.assertEqual(report["summary"]["users"], {"student": 1, "root": 1})
 
 
 if __name__ == "__main__":

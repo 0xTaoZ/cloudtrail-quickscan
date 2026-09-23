@@ -36,6 +36,75 @@ class CliTest(unittest.TestCase):
         self.assertIn("CloudTrail Quickscan", result.stdout)
         self.assertIn("Events checked: 14", result.stdout)
 
+    def test_limit_caps_text_summary_sections(self):
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(PROJECT_ROOT / "src")
+
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "cloudtrail_quickscan",
+                str(PROJECT_ROOT / "samples" / "cloudtrail_sample.json"),
+                "--summary-only",
+                "--limit",
+                "1",
+            ],
+            check=True,
+            capture_output=True,
+            env=env,
+            text=True,
+        )
+
+        self.assertIn("Top source IPs: 198.51.100.10=3\n", result.stdout)
+        self.assertIn("Top users: student-lab=13\n", result.stdout)
+
+    def test_limit_caps_json_summary_sections(self):
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(PROJECT_ROOT / "src")
+
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "cloudtrail_quickscan",
+                str(PROJECT_ROOT / "samples" / "cloudtrail_sample.json"),
+                "--json",
+                "--limit",
+                "1",
+            ],
+            check=True,
+            capture_output=True,
+            env=env,
+            text=True,
+        )
+
+        report = json.loads(result.stdout)
+        self.assertEqual(report["summary"]["source_ips"], {"198.51.100.10": 3})
+        self.assertEqual(report["summary"]["users"], {"student-lab": 13})
+
+    def test_limit_must_be_positive(self):
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(PROJECT_ROOT / "src")
+
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "cloudtrail_quickscan",
+                str(PROJECT_ROOT / "samples" / "cloudtrail_sample.json"),
+                "--limit",
+                "0",
+            ],
+            check=False,
+            capture_output=True,
+            env=env,
+            text=True,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("must be at least 1", result.stderr)
+
     def test_summary_orders_severity_by_priority(self):
         findings = [
             Finding(

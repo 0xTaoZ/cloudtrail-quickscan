@@ -25,18 +25,34 @@ def main() -> None:
         action="store_true",
         help="Print findings as JSON for scripts",
     )
+    parser.add_argument(
+        "--limit",
+        type=positive_int,
+        default=SUMMARY_LIMIT,
+        help="Limit each top summary section to this many values",
+    )
     args = parser.parse_args()
 
     events = load_events(args.path)
     findings = scan_events(events)
 
     if args.json:
-        print_json_report(events_count=len(events), findings=findings)
+        print_json_report(events_count=len(events), findings=findings, limit=args.limit)
     else:
-        print_report(events_count=len(events), findings=findings, summary_only=args.summary_only)
+        print_report(
+            events_count=len(events),
+            findings=findings,
+            summary_only=args.summary_only,
+            limit=args.limit,
+        )
 
 
-def print_report(events_count: int, findings: list, summary_only: bool = False) -> None:
+def print_report(
+    events_count: int,
+    findings: list,
+    summary_only: bool = False,
+    limit: int = SUMMARY_LIMIT,
+) -> None:
     print("CloudTrail Quickscan")
     print(f"Events checked: {events_count}")
     print(f"Findings: {len(findings)}")
@@ -54,8 +70,11 @@ def print_report(events_count: int, findings: list, summary_only: bool = False) 
             if counts[severity]
         )
     )
-    print(f"Top source IPs: {format_counts(finding.source_ip for finding in findings)}")
-    print(f"Top users: {format_counts(finding.user for finding in findings)}")
+    print(
+        f"Top source IPs: "
+        f"{format_counts((finding.source_ip for finding in findings), limit)}"
+    )
+    print(f"Top users: {format_counts((finding.user for finding in findings), limit)}")
 
     if summary_only:
         return
@@ -71,26 +90,37 @@ def print_report(events_count: int, findings: list, summary_only: bool = False) 
         print(f"      note: {finding.detail}")
 
 
-def print_json_report(events_count: int, findings: list) -> None:
+def print_json_report(
+    events_count: int,
+    findings: list,
+    limit: int = SUMMARY_LIMIT,
+) -> None:
     source_ips = Counter(finding.source_ip for finding in findings)
     users = Counter(finding.user for finding in findings)
     report = {
         "events_checked": events_count,
         "findings_count": len(findings),
         "summary": {
-            "source_ips": dict(source_ips.most_common(SUMMARY_LIMIT)),
-            "users": dict(users.most_common(SUMMARY_LIMIT)),
+            "source_ips": dict(source_ips.most_common(limit)),
+            "users": dict(users.most_common(limit)),
         },
         "findings": [finding.to_dict() for finding in findings],
     }
     print(json.dumps(report, indent=2))
 
 
-def format_counts(values) -> str:
+def format_counts(values, limit: int = SUMMARY_LIMIT) -> str:
     return ", ".join(
         f"{value}={count}"
-        for value, count in Counter(values).most_common(SUMMARY_LIMIT)
+        for value, count in Counter(values).most_common(limit)
     )
+
+
+def positive_int(value: str) -> int:
+    parsed = int(value)
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("must be at least 1")
+    return parsed
 
 
 if __name__ == "__main__":

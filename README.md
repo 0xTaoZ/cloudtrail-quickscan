@@ -36,7 +36,13 @@ JSON output for scripts:
 PYTHONPATH=src python3 -m cloudtrail_quickscan samples/cloudtrail_sample.json --json
 ```
 
-The JSON report includes compact source IP and user summary counts for quick triage.
+Limit each top source IP and user summary to one value:
+
+```bash
+PYTHONPATH=src python3 -m cloudtrail_quickscan samples/cloudtrail_sample.json --summary-only --limit 1
+```
+
+The limit also applies to JSON summary counts. It does not remove individual findings.
 
 Run tests:
 

@@ -324,6 +324,41 @@ class RuleTest(unittest.TestCase):
             "An IAM MFA device was deactivated or deleted. Confirm this was expected account recovery or cleanup.",
         )
 
+    def test_permissions_boundary_removal_is_high_finding(self):
+        events = [
+            {
+                "eventName": "DeleteUserPermissionsBoundary",
+                "awsRegion": "us-east-1",
+                "eventTime": "2026-06-28T12:09:45Z",
+                "sourceIPAddress": "198.51.100.35",
+                "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+                "requestParameters": {"userName": "backup-user"},
+            },
+            {
+                "eventName": "DeleteRolePermissionsBoundary",
+                "awsRegion": "us-east-1",
+                "eventTime": "2026-06-28T12:09:50Z",
+                "sourceIPAddress": "198.51.100.35",
+                "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+                "requestParameters": {"roleName": "backup-role"},
+            },
+        ]
+
+        findings = scan_events(events)
+
+        self.assertEqual([finding.severity for finding in findings], ["HIGH", "HIGH"])
+        self.assertEqual(
+            [finding.title for finding in findings],
+            [
+                "IAM permissions boundary removed: DeleteUserPermissionsBoundary",
+                "IAM permissions boundary removed: DeleteRolePermissionsBoundary",
+            ],
+        )
+        self.assertEqual(
+            findings[0].detail,
+            "An IAM permissions boundary was removed. Confirm the identity's effective permissions are still limited as intended.",
+        )
+
     def test_administrator_policy_attachment_is_high_finding(self):
         event = {
             "eventName": "AttachRolePolicy",

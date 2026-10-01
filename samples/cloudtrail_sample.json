@@ -67,6 +67,19 @@
       }
     },
     {
+      "eventTime": "2026-06-28T08:21:45Z",
+      "eventName": "DeleteRolePermissionsBoundary",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "198.51.100.35",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "roleName": "backup-role"
+      }
+    },
+    {
       "eventTime": "2026-06-28T08:22:00Z",
       "eventName": "CreateAccessKey",
       "awsRegion": "us-east-1",

@@ -14,6 +14,7 @@ This is not a full SIEM or a cloud security platform. It is meant to be a small 
 - IAM access key deactivation or deletion
 - IAM user console password creation
 - IAM MFA device deactivation or deletion
+- IAM user or role permissions boundary removal
 - IAM policy and access key changes
 - AWS managed `AdministratorAccess` policy attachments
 - security group changes
@@ -56,17 +57,18 @@ The same test command runs in GitHub Actions.
 
 ```text
 CloudTrail Quickscan
-Events checked: 14
-Findings: 19
-Severity: HIGH=7, MED=11, LOW=1
+Events checked: 15
+Findings: 20
+Severity: HIGH=8, MED=11, LOW=1
 Top source IPs: 198.51.100.10=3, 198.51.100.31=3, 198.51.100.32=2
-Top users: student-lab=13, 111122223333=5, arn:aws:sts::111122223333:assumed-role/AdminRole/student=1
+Top users: student-lab=14, 111122223333=5, arn:aws:sts::111122223333:assumed-role/AdminRole/student=1
 
 MED   Failed console login
 MED   IAM change: CreateAccessKey
 MED   Access key deactivated
 MED   Console password created
 MED   MFA device removed: DeactivateMFADevice
+HIGH  IAM permissions boundary removed: DeleteRolePermissionsBoundary
 HIGH  Root account activity
 HIGH  Root access key created
 MED   IAM change: CreateAccessKey

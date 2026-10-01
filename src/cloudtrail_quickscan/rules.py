@@ -43,6 +43,11 @@ MFA_DEVICE_REMOVAL_EVENTS = {
     "DeleteVirtualMFADevice",
 }
 
+PERMISSIONS_BOUNDARY_REMOVAL_EVENTS = {
+    "DeleteRolePermissionsBoundary",
+    "DeleteUserPermissionsBoundary",
+}
+
 ACCESS_DENIED_ERROR_MARKERS = {
     "AccessDenied",
     "AccessDeniedException",
@@ -88,6 +93,7 @@ def scan_event(event: dict[str, Any]) -> list[Finding]:
         check_access_key_lifecycle_change,
         check_console_password_creation,
         check_mfa_device_removal,
+        check_permissions_boundary_removal,
         check_administrator_policy_attachment,
         check_iam_change,
         check_security_group_change,
@@ -212,6 +218,22 @@ def check_mfa_device_removal(event: dict[str, Any]) -> Finding | None:
         detail=(
             "An IAM MFA device was deactivated or deleted. "
             "Confirm this was expected account recovery or cleanup."
+        ),
+    )
+
+
+def check_permissions_boundary_removal(event: dict[str, Any]) -> Finding | None:
+    event_name = event.get("eventName")
+    if event_name not in PERMISSIONS_BOUNDARY_REMOVAL_EVENTS:
+        return None
+
+    return make_finding(
+        event,
+        severity="HIGH",
+        title=f"IAM permissions boundary removed: {event_name}",
+        detail=(
+            "An IAM permissions boundary was removed. Confirm the identity's "
+            "effective permissions are still limited as intended."
         ),
     )
 

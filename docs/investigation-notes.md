@@ -44,6 +44,12 @@ These notes are short on purpose. They are reminders for what I would check afte
 - Check if a replacement MFA device was enrolled shortly after.
 - Review nearby console logins and permission changes for the same user.
 
+## IAM permissions boundary removal
+
+- Confirm whether the boundary removal was approved and temporary.
+- Review the identity's attached and inline policies for newly effective permissions.
+- Check nearby role assumptions and API calls from the same user or source IP.
+
 ## IAM changes
 
 - Check who made the change and why.

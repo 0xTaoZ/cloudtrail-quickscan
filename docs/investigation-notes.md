@@ -80,6 +80,12 @@ These notes are short on purpose. They are reminders for what I would check afte
 - Check who made the change, from which source IP, and which role or user was used.
 - Look for IAM, network, or compute activity right before and after the logging change.
 
+## Security monitoring disabled
+
+- Confirm whether GuardDuty, Security Hub, or AWS Config was turned off for planned work and turned back on.
+- Treat it as defense evasion until explained: an attacker who disables detection usually acts right after.
+- Review the same identity's activity in the following hours, including events in other regions, since each service is regional.
+
 ## S3 bucket exposure changes
 
 - Check whether the bucket should be public.

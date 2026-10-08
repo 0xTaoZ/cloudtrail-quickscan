@@ -324,6 +324,41 @@ class RuleTest(unittest.TestCase):
             "An IAM MFA device was deactivated or deleted. Confirm this was expected account recovery or cleanup.",
         )
 
+    def test_security_monitoring_disabled_is_high_finding(self):
+        def event(name, request=None):
+            return {
+                "eventName": name,
+                "awsRegion": "us-east-1",
+                "eventTime": "2026-06-28T12:20:00Z",
+                "sourceIPAddress": "198.51.100.35",
+                "userIdentity": {"type": "IAMUser", "userName": "student-lab"},
+                "requestParameters": request or {},
+            }
+
+        events = [
+            event("DeleteDetector", {"detectorId": "12abc34d567e8fa901bc2d34e56789f0"}),
+            event("UpdateDetector", {"detectorId": "12abc34d567e8fa901bc2d34e56789f0", "enable": False}),
+            event("UpdateDetector", {"detectorId": "12abc34d567e8fa901bc2d34e56789f0", "enable": True}),
+            event("UpdateDetector", {"detectorId": "12abc34d567e8fa901bc2d34e56789f0", "findingPublishingFrequency": "SIX_HOURS"}),
+            event("DisableSecurityHub"),
+            event("StopConfigurationRecorder", {"configurationRecorderName": "default"}),
+            event("DeleteConfigurationRecorder", {"configurationRecorderName": "default"}),
+        ]
+
+        findings = scan_events(events)
+
+        self.assertEqual(
+            [finding.title for finding in findings],
+            [
+                "GuardDuty monitoring disabled: DeleteDetector",
+                "GuardDuty monitoring disabled: UpdateDetector",
+                "Security Hub monitoring disabled: DisableSecurityHub",
+                "AWS Config monitoring disabled: StopConfigurationRecorder",
+                "AWS Config monitoring disabled: DeleteConfigurationRecorder",
+            ],
+        )
+        self.assertEqual({finding.severity for finding in findings}, {"HIGH"})
+
     def test_permissions_boundary_removal_is_high_finding(self):
         events = [
             {

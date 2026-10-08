@@ -18,6 +18,7 @@ This is not a full SIEM or a cloud security platform. It is meant to be a small 
 - IAM policy and access key changes
 - AWS managed `AdministratorAccess` policy attachments
 - security group changes
+- GuardDuty, Security Hub, or AWS Config being turned off
 - CloudTrail logging changes, such as `DeleteTrail` or `StopLogging`
 - S3 bucket exposure changes, such as public ACLs or public access block removal
 - denied AWS API calls, such as `AccessDenied` or `UnauthorizedOperation`

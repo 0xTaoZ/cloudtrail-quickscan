@@ -48,6 +48,16 @@ PERMISSIONS_BOUNDARY_REMOVAL_EVENTS = {
     "DeleteUserPermissionsBoundary",
 }
 
+# Calls that turn off a detection service outright. UpdateDetector is only
+# included when it sets the GuardDuty detector to disabled.
+SECURITY_MONITORING_DISABLE_EVENTS = {
+    "DeleteConfigurationRecorder": "AWS Config",
+    "DeleteDetector": "GuardDuty",
+    "DisableSecurityHub": "Security Hub",
+    "StopConfigurationRecorder": "AWS Config",
+    "UpdateDetector": "GuardDuty",
+}
+
 ACCESS_DENIED_ERROR_MARKERS = {
     "AccessDenied",
     "AccessDeniedException",
@@ -99,6 +109,7 @@ def scan_event(event: dict[str, Any]) -> list[Finding]:
         check_security_group_change,
         check_public_admin_port_ingress,
         check_cloudtrail_logging_change,
+        check_security_monitoring_disabled,
         check_s3_bucket_exposure_change,
         check_access_denied_error,
         check_uncommon_region,
@@ -346,6 +357,28 @@ def check_cloudtrail_logging_change(event: dict[str, Any]) -> Finding | None:
         severity=severity,
         title=f"CloudTrail logging change: {event_name}",
         detail="CloudTrail logging was disabled, deleted, or changed.",
+    )
+
+
+def check_security_monitoring_disabled(event: dict[str, Any]) -> Finding | None:
+    event_name = event.get("eventName")
+    service = SECURITY_MONITORING_DISABLE_EVENTS.get(event_name)
+    if service is None:
+        return None
+
+    if event_name == "UpdateDetector":
+        request = event.get("requestParameters") or {}
+        if request.get("enable") is not False:
+            return None
+
+    return make_finding(
+        event,
+        severity="HIGH",
+        title=f"{service} monitoring disabled: {event_name}",
+        detail=(
+            f"{service} was turned off, so later activity may not raise alerts. "
+            "Confirm the change was planned and check what happened afterwards."
+        ),
     )
 
 

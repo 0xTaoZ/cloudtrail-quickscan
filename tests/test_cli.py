@@ -36,6 +36,20 @@ class CliTest(unittest.TestCase):
         self.assertIn("CloudTrail Quickscan", result.stdout)
         self.assertIn("Events checked: 15", result.stdout)
 
+    def test_monitoring_sample_separates_denied_requests_in_json(self):
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(PROJECT_ROOT / "src")
+        result = subprocess.run(
+            [sys.executable, "-m", "cloudtrail_quickscan",
+             str(PROJECT_ROOT / "samples" / "monitoring_changes.json"), "--json"],
+            check=True, capture_output=True, env=env, text=True,
+        )
+        report = json.loads(result.stdout)
+        self.assertEqual(
+            [finding["title"] for finding in report["findings"]],
+            ["GuardDuty monitoring disabled: UpdateDetector", "API call denied: UpdateDetector"],
+        )
+
     def test_limit_caps_text_summary_sections(self):
         env = os.environ.copy()
         env["PYTHONPATH"] = str(PROJECT_ROOT / "src")

@@ -26,6 +26,11 @@ This is not a full SIEM or a cloud security platform. It is meant to be a small 
 - public SSH or RDP ingress in security group changes
 - events from unusual AWS regions
 
+Monitoring-disable findings skip events with a nonempty top-level `errorCode`.
+Denied calls, root activity, and unusual-region findings remain available for
+those events. A missing error code alone does not prove the service is currently
+disabled; confirm its state during investigation.
+
 ## Quick start
 
 ```bash

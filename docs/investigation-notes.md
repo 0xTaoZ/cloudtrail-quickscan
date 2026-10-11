@@ -82,6 +82,9 @@ These notes are short on purpose. They are reminders for what I would check afte
 
 ## Security monitoring disabled
 
+- Events with a nonempty top-level `errorCode` are excluded from this finding because the request failed. Denied requests still appear as denied API calls.
+- Confirm the current service state; the absence of an error code is not a live configuration check.
+
 - Confirm whether GuardDuty, Security Hub, or AWS Config was turned off for planned work and turned back on.
 - Treat it as defense evasion until explained: an attacker who disables detection usually acts right after.
 - Review the same identity's activity in the following hours, including events in other regions, since each service is regional.

@@ -359,6 +359,27 @@ class RuleTest(unittest.TestCase):
         )
         self.assertEqual({finding.severity for finding in findings}, {"HIGH"})
 
+    def test_failed_monitoring_changes_do_not_report_disabled_services(self):
+        for name in (
+            "DeleteDetector", "UpdateDetector", "DisableSecurityHub",
+            "StopConfigurationRecorder", "DeleteConfigurationRecorder",
+        ):
+            for error in ("AccessDeniedException", "InternalException"):
+                with self.subTest(name=name, error=error):
+                    event = {
+                        "eventName": name,
+                        "awsRegion": "ap-south-1",
+                        "userIdentity": {"type": "Root", "principalId": "111122223333"},
+                        "requestParameters": {"enable": False},
+                        "errorCode": error,
+                    }
+                    titles = [finding.title for finding in scan_event(event)]
+                    self.assertFalse(any("monitoring disabled" in title for title in titles))
+                    self.assertIn("Root account activity", titles)
+                    self.assertIn("Event from uncommon region: ap-south-1", titles)
+                    if error == "AccessDeniedException":
+                        self.assertIn(f"API call denied: {name}", titles)
+
     def test_permissions_boundary_removal_is_high_finding(self):
         events = [
             {

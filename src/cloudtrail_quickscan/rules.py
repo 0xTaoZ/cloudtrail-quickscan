@@ -361,6 +361,9 @@ def check_cloudtrail_logging_change(event: dict[str, Any]) -> Finding | None:
 
 
 def check_security_monitoring_disabled(event: dict[str, Any]) -> Finding | None:
+    if event.get("errorCode"):
+        return None
+
     event_name = event.get("eventName")
     service = SECURITY_MONITORING_DISABLE_EVENTS.get(event_name)
     if service is None:

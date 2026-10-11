@@ -1,0 +1,40 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.09",
+      "eventTime": "2026-06-28T12:20:00Z",
+      "eventSource": "guardduty.amazonaws.com",
+      "eventName": "UpdateDetector",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.35",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "detectorId": "12abc34d567e8fa901bc2d34e56789f0",
+        "enable": false
+      },
+      "responseElements": null
+    },
+    {
+      "eventVersion": "1.09",
+      "eventTime": "2026-06-28T12:21:00Z",
+      "eventSource": "guardduty.amazonaws.com",
+      "eventName": "UpdateDetector",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.35",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "detectorId": "12abc34d567e8fa901bc2d34e56789f0",
+        "enable": false
+      },
+      "responseElements": null,
+      "errorCode": "AccessDeniedException",
+      "errorMessage": "The caller is not authorized to update this detector."
+    }
+  ]
+}

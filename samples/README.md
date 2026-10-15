@@ -17,3 +17,13 @@ PYTHONPATH=src python3 -m cloudtrail_quickscan samples/monitoring_changes.json
 
 Expect one HIGH monitoring-disable finding and one MED denied-call finding.
 The denied request must not add a second monitoring-disable finding.
+
+`boundary_removals.json` pairs successful and denied user/role permissions-boundary
+removal requests. Run:
+
+```bash
+PYTHONPATH=src python3 -m cloudtrail_quickscan samples/boundary_removals.json
+```
+
+Expect two HIGH boundary-removal findings and two MED denied-call findings.
+Denied requests must not add boundary-removal findings.

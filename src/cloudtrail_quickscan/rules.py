@@ -234,6 +234,9 @@ def check_mfa_device_removal(event: dict[str, Any]) -> Finding | None:
 
 
 def check_permissions_boundary_removal(event: dict[str, Any]) -> Finding | None:
+    if event.get("errorCode"):
+        return None
+
     event_name = event.get("eventName")
     if event_name not in PERMISSIONS_BOUNDARY_REMOVAL_EVENTS:
         return None

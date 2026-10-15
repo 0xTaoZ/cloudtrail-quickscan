@@ -1,0 +1,66 @@
+{
+  "Records": [
+    {
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "DeleteUserPermissionsBoundary",
+      "awsRegion": "us-east-1",
+      "eventTime": "2026-06-28T12:09:45Z",
+      "sourceIPAddress": "198.51.100.35",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "userName": "backup-user"
+      },
+      "responseElements": null
+    },
+    {
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "DeleteUserPermissionsBoundary",
+      "awsRegion": "us-east-1",
+      "eventTime": "2026-06-28T12:09:45Z",
+      "sourceIPAddress": "198.51.100.35",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "userName": "backup-user"
+      },
+      "responseElements": null,
+      "errorCode": "AccessDenied"
+    },
+    {
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "DeleteRolePermissionsBoundary",
+      "awsRegion": "us-east-1",
+      "eventTime": "2026-06-28T12:09:45Z",
+      "sourceIPAddress": "198.51.100.35",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "roleName": "backup-role"
+      },
+      "responseElements": null
+    },
+    {
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "DeleteRolePermissionsBoundary",
+      "awsRegion": "us-east-1",
+      "eventTime": "2026-06-28T12:09:45Z",
+      "sourceIPAddress": "198.51.100.35",
+      "userIdentity": {
+        "type": "IAMUser",
+        "userName": "student-lab"
+      },
+      "requestParameters": {
+        "roleName": "backup-role"
+      },
+      "responseElements": null,
+      "errorCode": "AccessDenied"
+    }
+  ]
+}

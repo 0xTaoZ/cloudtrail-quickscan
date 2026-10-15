@@ -415,6 +415,34 @@ class RuleTest(unittest.TestCase):
             "An IAM permissions boundary was removed. Confirm the identity's effective permissions are still limited as intended.",
         )
 
+    def test_failed_boundary_removal_preserves_context_without_removal_finding(self):
+        for name in ("DeleteUserPermissionsBoundary", "DeleteRolePermissionsBoundary"):
+            for error in ("AccessDenied", "NoSuchEntity", "ServiceFailure"):
+                with self.subTest(name=name, error=error):
+                    event = {
+                        "eventName": name,
+                        "awsRegion": "ap-south-1",
+                        "userIdentity": {"type": "Root"},
+                        "errorCode": error,
+                    }
+                    titles = [finding.title for finding in scan_event(event)]
+                    expected = ["Root account activity"]
+                    if error == "AccessDenied":
+                        expected.append(f"API call denied: {name}")
+                    expected.append("Event from uncommon region: ap-south-1")
+                    self.assertEqual(titles, expected)
+
+    def test_boundary_removal_accepts_empty_or_missing_error_code(self):
+        for name in ("DeleteUserPermissionsBoundary", "DeleteRolePermissionsBoundary"):
+            for extra in ({}, {"errorCode": None}, {"errorCode": ""}):
+                with self.subTest(name=name, extra=extra):
+                    findings = scan_event({"eventName": name, **extra})
+                    self.assertEqual(
+                        [finding.title for finding in findings],
+                        [f"IAM permissions boundary removed: {name}"],
+                    )
+                    self.assertEqual(findings[0].severity, "HIGH")
+
     def test_administrator_policy_attachment_is_high_finding(self):
         event = {
             "eventName": "AttachRolePolicy",

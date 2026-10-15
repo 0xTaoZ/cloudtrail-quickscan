@@ -50,6 +50,23 @@ class CliTest(unittest.TestCase):
             ["GuardDuty monitoring disabled: UpdateDetector", "API call denied: UpdateDetector"],
         )
 
+    def test_boundary_sample_separates_denied_requests_in_json(self):
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(PROJECT_ROOT / "src")
+        result = subprocess.run(
+            [sys.executable, "-m", "cloudtrail_quickscan",
+             str(PROJECT_ROOT / "samples" / "boundary_removals.json"), "--json"],
+            check=True, capture_output=True, env=env, text=True,
+        )
+        report = json.loads(result.stdout)
+        self.assertEqual(
+            [finding["title"] for finding in report["findings"]],
+            ["IAM permissions boundary removed: DeleteUserPermissionsBoundary",
+             "API call denied: DeleteUserPermissionsBoundary",
+             "IAM permissions boundary removed: DeleteRolePermissionsBoundary",
+             "API call denied: DeleteRolePermissionsBoundary"],
+        )
+
     def test_limit_caps_text_summary_sections(self):
         env = os.environ.copy()
         env["PYTHONPATH"] = str(PROJECT_ROOT / "src")

@@ -46,6 +46,9 @@ These notes are short on purpose. They are reminders for what I would check afte
 
 ## IAM permissions boundary removal
 
+- Requests with a nonempty top-level `errorCode` do not produce removal findings; denied-call, root-activity, and region checks still apply.
+- Confirm the current boundary and effective permissions; an event without an error code is not a live configuration check.
+
 - Confirm whether the boundary removal was approved and temporary.
 - Review the identity's attached and inline policies for newly effective permissions.
 - Check nearby role assumptions and API calls from the same user or source IP.
